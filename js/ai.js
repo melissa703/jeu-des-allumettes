@@ -13,13 +13,14 @@ const Machine = (function () {
   }
 
   /**
-   * IA : comme la dernière allumette fait perdre, la position gagnante
-   * est de laisser à l'adversaire 1, 5, 9, 13... allumettes (4k + 1).
-   * On retire donc (restantes - 1) mod 4. Si ce reste vaut 0, on est
-   * en position perdante : on joue au hasard en espérant une erreur.
+   * IA : comme celui qui prend la dernière allumette gagne, la position
+   * gagnante est de laisser à l'adversaire 0, 4, 8, 12... allumettes
+   * (un multiple de 4). On retire donc restantes mod 4. Si ce reste
+   * vaut 0, on est en position perdante : on joue au hasard en espérant
+   * une erreur.
    */
   function coupStrategique(restantes) {
-    const n = (restantes - 1) % 4;
+    const n = restantes % 4;
     return n === 0 ? coupAleatoire(restantes) : n;
   }
 

@@ -175,7 +175,7 @@ const UI = (function () {
     if (config.mode !== "deux") badge = g.type === "humain" ? "Victoire" : "Défaite";
     $("fin-badge").textContent = badge;
     $("fin-titre").textContent = g.nom + " gagne !";
-    $("fin-detail").textContent = p.nom + " a retiré la dernière allumette et perd la partie.";
+    $("fin-detail").textContent = g.nom + " a retiré la dernière allumette et remporte la partie.";
     $("fin-resume").textContent = etat.historique.length + " coups joués, " + etat.initial + " allumettes au départ.";
     lancerBraises();
     window.afficherEcran("ecran-fin");
