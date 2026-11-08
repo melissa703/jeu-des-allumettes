@@ -474,3 +474,25 @@ input:focus-visible { outline: none; border-color: var(--or); box-shadow: 0 0 0 
   .compteur { grid-column: 1 / -1; order: -1; }
   .carte-joueur.active { transform: none; }
 }
+
+/* ---------- Bouton son (en haut à droite, sur tous les écrans) ---------- */
+.btn-son {
+  position: fixed;
+  top: 0.9rem;
+  right: 0.9rem;
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
+  font-family: var(--police-texte);
+  font-size: 0.85rem;
+  color: var(--ivoire-doux);
+  background: rgba(43, 31, 23, 0.85);
+  border: 1px solid rgba(224, 169, 59, 0.35);
+  border-radius: 999px;
+  cursor: pointer;
+}
+.btn-son:hover { color: var(--ivoire); border-color: var(--or); }
+.btn-son:focus-visible { outline: 2px solid var(--or); outline-offset: 2px; }
+.btn-son[aria-pressed="false"] { opacity: 0.75; }

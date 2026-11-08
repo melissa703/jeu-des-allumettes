@@ -12,6 +12,25 @@ function afficherEcran(idEcran) {
   window.scrollTo(0, 0);
 }
 
+/* ---------- Son : bouton muet + petit clic sur les boutons ---------- */
+function majBoutonSon() {
+  const actif = Son.estActif();
+  const b = document.getElementById("btn-son");
+  b.setAttribute("aria-pressed", String(actif));
+  b.setAttribute("aria-label", actif ? "Couper le son" : "Activer le son");
+  document.getElementById("btn-son-icone").textContent = actif ? "🔊" : "🔇";
+  document.getElementById("btn-son-texte").textContent = actif ? "Son" : "Muet";
+}
+document.getElementById("btn-son").addEventListener("click", function () { Son.basculer(); majBoutonSon(); });
+majBoutonSon();
+
+/* Clic sonore sur tous les boutons du jeu (sauf le bouton son et les retraits, qui ont leur propre son) */
+document.addEventListener("click", function (e) {
+  const b = e.target.closest("button");
+  if (!b || b.id === "btn-son" || b.disabled || b.hasAttribute("data-retrait") || b.id === "btn-commencer" || b.id === "btn-rejouer") return;
+  Son.clic();
+});
+
 /* ---------- Boutons de navigation (data-aller) ---------- */
 document.querySelectorAll("[data-aller]").forEach(function (bouton) {
   bouton.addEventListener("click", function () { afficherEcran(bouton.dataset.aller); });

@@ -1,7 +1,7 @@
 /* ==========================================================
    game.js - LOGIQUE DU JEU (aucun accès à l'affichage)
    Règle : on retire 1, 2 ou 3 allumettes.
-   Celui qui retire la DERNIÈRE allumette PERD.
+   Celui qui retire la DERNIÈRE allumette GAGNE.
    ========================================================== */
 const Jeu = (function () {
   const MAX_RETRAIT = 3;
@@ -36,12 +36,12 @@ const Jeu = (function () {
   /** Change de joueur */
   function changerJoueur(etat) { etat.indexActif = 1 - etat.indexActif; }
 
-  /** Vérifie la fin : si plus d'allumettes, le joueur actif (qui vient de retirer la dernière) PERD */
+  /** Vérifie la fin : si plus d'allumettes, le joueur actif (qui vient de retirer la dernière) GAGNE */
   function verifierFin(etat) {
     if (etat.restantes === 0) {
       etat.terminee = true;
-      etat.perdant = joueurActif(etat);
-      etat.gagnant = etat.joueurs[1 - etat.indexActif];
+      etat.gagnant = joueurActif(etat);
+      etat.perdant = etat.joueurs[1 - etat.indexActif];
       return true;
     }
     return false;
