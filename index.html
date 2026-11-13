@@ -8,13 +8,20 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/epique.css">
 </head>
 <body>
+  <canvas id="braises-fond" aria-hidden="true"></canvas>
 
   <!-- Bouton son (visible sur tous les écrans) -->
-  <button type="button" class="btn-son" id="btn-son" aria-pressed="true" aria-label="Couper le son">
-    <span id="btn-son-icone" aria-hidden="true">🔊</span> <span id="btn-son-texte">Son</span>
-  </button>
+  <div class="outils-haut" aria-label="Game settings" style="position:fixed;top:1rem;right:1rem;z-index:1000;display:flex;gap:.5rem;">
+    <button type="button" class="btn-son" id="btn-langue" aria-label="Switch language" style="position:static;">
+      <span aria-hidden="true">🌐</span> <span id="btn-langue-texte">EN</span>
+    </button>
+    <button type="button" class="btn-son" id="btn-son" aria-pressed="true" aria-label="Couper le son" style="position:static;">
+      <span id="btn-son-icone" aria-hidden="true">🔊</span> <span id="btn-son-texte">Son</span>
+    </button>
+  </div>
 
   <!-- ÉCRAN 1 : ACCUEIL -->
   <main id="ecran-accueil" class="ecran actif" aria-labelledby="titre-accueil">
@@ -25,6 +32,7 @@
         <div class="boutons-accueil">
           <button class="btn btn-or" data-aller="ecran-config">Nouvelle partie</button>
           <button class="btn btn-contour" data-aller="ecran-regles">Découvrir les règles</button>
+          <button class="btn btn-contour" data-aller="ecran-pantheon">Panthéon</button>
           <button class="btn btn-discret" data-aller="ecran-quitter">Quitter</button>
         </div>
       </div>
@@ -114,6 +122,8 @@
         <div class="carte-joueur" id="carte-j2"><span id="nom-j2">Joueur 2</span></div>
       </div>
 
+      <div class="demon" aria-hidden="true"><svg viewBox="0 0 120 130"><defs><linearGradient id="or" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6d57a"/><stop offset="1" stop-color="#9a6a1c"/></linearGradient></defs><path d="M14 22 L38 34 L82 34 L106 22 L96 52 L84 34 Z" fill="url(#or)"/><path d="M30 32 Q60 18 90 32 Q98 78 78 112 Q60 128 42 112 Q22 78 30 32Z" fill="url(#or)" stroke="#5a3a0c" stroke-width="2"/><path d="M38 58 L54 64 L52 72 L36 68Z M82 58 L66 64 L68 72 L84 68Z" fill="#120b06"/><circle class="oeil" cx="45" cy="66" r="3" fill="#ff5a2a"/><circle class="oeil" cx="75" cy="66" r="3" fill="#ff5a2a"/><path d="M44 96 L52 90 L60 98 L68 90 L76 96 L68 108 L52 108Z" fill="#120b06"/></svg></div>
+      <p id="demon-parole" class="parole" aria-live="polite"></p>
       <p id="indicateur-tour" class="indicateur" role="status" aria-live="polite"></p>
 
       <div id="zone-allumettes" class="zone-allumettes" aria-hidden="true"></div>
@@ -123,6 +133,8 @@
         <button class="btn-retrait" data-retrait="2">Retirer 2 allumettes</button>
         <button class="btn-retrait" data-retrait="3">Retirer 3 allumettes</button>
       </div>
+
+      <button type="button" class="btn-conseil" id="btn-conseil">🔮 Conseil du sage (3)</button>
 
       <section class="historique" aria-label="Historique des coups">
         <h3>Derniers coups</h3>
@@ -190,6 +202,15 @@
     </div>
   </main>
 
+  <!-- ÉCRAN : PANTHÉON -->
+  <main id="ecran-pantheon" class="ecran">
+    <div class="panneau large">
+      <h2 class="titre-ecran">Panthéon</h2>
+      <div id="pantheon-contenu"></div>
+      <div class="actions"><button class="btn btn-or" data-aller="ecran-accueil">Retour</button></div>
+    </div>
+  </main>
+
   <!-- ÉCRAN : AU REVOIR (bouton Quitter) -->
   <main id="ecran-quitter" class="ecran">
     <div class="provisoire">
@@ -202,10 +223,12 @@
     </div>
   </main>
 
+  <script src="js/i18n.js"></script>
   <script src="js/game.js"></script>
   <script src="js/sound.js"></script>
   <script src="js/ai.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/epique.js"></script>
 </body>
 </html>
