@@ -27,6 +27,7 @@ const UI = (function () {
     $("nom-j2").textContent = etat.joueurs[1].nom;
     dessinerAllumettes(etat.restantes);
     majCompteur();
+    if (window.Epique) Epique.debut(cfg);
     Son.depart();
     lancerTour();
   }
@@ -38,9 +39,9 @@ const UI = (function () {
   function annuler() { jeton++; }
 
   function libelleMode(mode) {
-    if (mode === "deux") return "Deux joueurs";
-    if (mode === "machine") return "Contre la machine";
-    return "Contre l'IA";
+    if (mode === "deux") return t("Deux joueurs");
+    if (mode === "machine") return t("Contre la machine");
+    return t("Contre l'IA");
   }
 
   /* ---------- Dessin des allumettes ---------- */
@@ -82,7 +83,7 @@ const UI = (function () {
     c.classList.remove("pulse");
     void c.offsetWidth;            // relance l'animation
     c.classList.add("pulse");
-    $("libelle-restantes").textContent = etat.restantes > 1 ? "allumettes restantes" : "allumette restante";
+    $("libelle-restantes").textContent = etat.restantes > 1 ? t("allumettes restantes") : t("allumette restante");
   }
 
   function majJoueurActif() {
@@ -110,8 +111,8 @@ const UI = (function () {
     qui.textContent = entree.joueur;
     li.appendChild(qui);
     li.appendChild(document.createTextNode(
-      " retire " + entree.retire + (entree.retire > 1 ? " allumettes" : " allumette") +
-      " — reste : " + entree.restantes));
+      t(entree.retire > 1 ? " retire {n} allumettes — reste : {r}" : " retire {n} allumette — reste : {r}",
+        { n: entree.retire, r: entree.restantes })));
     const liste = $("liste-historique");
     liste.insertBefore(li, liste.firstChild);
     while (liste.children.length > NB_HISTORIQUE) liste.removeChild(liste.lastChild);
@@ -125,10 +126,10 @@ const UI = (function () {
     majJoueurActif();
     if (joueur.type === "humain") {
       verrou = false;
-      indicateur("À toi de jouer, " + joueur.nom + ".", false);
+      indicateur(t("À toi de jouer, {nom}.", { nom: joueur.nom }), false);
     } else {
       verrou = true;                 // le joueur ne peut rien faire pendant la machine
-      indicateur(joueur.nom + " réfléchit", true);
+      indicateur(t("{nom} réfléchit", { nom: joueur.nom }), true);
       tourMachine(joueur);
     }
     majBoutons();
@@ -141,7 +142,8 @@ const UI = (function () {
     setTimeout(function () {
       if (monJeton !== jeton) return;
       const n = Machine.choisirCoup(joueur.type, etat.restantes);
-      indicateur(joueur.nom + " retire " + n + (n > 1 ? " allumettes" : " allumette") + ".", false);
+      indicateur(t(n > 1 ? "{nom} retire {n} allumettes." : "{nom} retire {n} allumette.",
+        { nom: joueur.nom, n: n }), false);
       jouerCoup(n);
     }, 1000 + Math.random() * 600);
   }
@@ -159,6 +161,7 @@ const UI = (function () {
     majBoutons();
     ajouterHistorique(etat.historique[etat.historique.length - 1]);
     majCompteur();                   // mise à jour immédiate du nombre
+    if (window.Epique) Epique.coup(etat, etat.historique[etat.historique.length - 1]);
     Son.retrait(n);
     const monJeton = jeton;
     animerRetrait(n, function () {
@@ -174,12 +177,13 @@ const UI = (function () {
 
   function afficherFin() {
     const g = etat.gagnant, p = etat.perdant;
-    let badge = "Partie terminée";
-    if (config.mode !== "deux") badge = g.type === "humain" ? "Victoire" : "Défaite";
+    let badge = t("Partie terminée");
+    if (config.mode !== "deux") badge = g.type === "humain" ? t("Victoire") : t("Défaite");
     $("fin-badge").textContent = badge;
-    $("fin-titre").textContent = g.nom + " gagne !";
-    $("fin-detail").textContent = g.nom + " a retiré la dernière allumette et remporte la partie.";
-    $("fin-resume").textContent = etat.historique.length + " coups joués, " + etat.initial + " allumettes au départ.";
+    $("fin-titre").textContent = t("{nom} gagne !", { nom: g.nom });
+    $("fin-detail").textContent = t("{nom} a retiré la dernière allumette et remporte la partie.", { nom: g.nom });
+    $("fin-resume").textContent = t("{n} coups joués, {i} allumettes au départ.", { n: etat.historique.length, i: etat.initial });
+    if (window.Epique) Epique.fin(etat, config);
     lancerBraises();
     if (config.mode !== "deux" && g.type !== "humain") Son.defaite(); else Son.victoire();
     window.afficherEcran("ecran-fin");
@@ -198,5 +202,31 @@ const UI = (function () {
     }
   }
 
-  return { demarrer, rejouer, annuler, clicHumain };
+  /** Actualise les textes générés par JavaScript après un changement de langue. */
+  function actualiserLangue() {
+    if (!etat || !config) return;
+    $("info-mode").textContent = libelleMode(config.mode);
+    $("libelle-restantes").textContent = etat.restantes > 1 ? t("allumettes restantes") : t("allumette restante");
+
+    const liste = $("liste-historique");
+    liste.innerHTML = "";
+    etat.historique.slice(-NB_HISTORIQUE).forEach(ajouterHistorique);
+
+    if (etat.terminee) {
+      const g = etat.gagnant;
+      $("fin-badge").textContent = config.mode !== "deux"
+        ? (g.type === "humain" ? t("Victoire") : t("Défaite"))
+        : t("Partie terminée");
+      $("fin-titre").textContent = t("{nom} gagne !", { nom: g.nom });
+      $("fin-detail").textContent = t("{nom} a retiré la dernière allumette et remporte la partie.", { nom: g.nom });
+      $("fin-resume").textContent = t("{n} coups joués, {i} allumettes au départ.", { n: etat.historique.length, i: etat.initial });
+    } else {
+      const joueur = Jeu.joueurActif(etat);
+      indicateur(joueur.type === "humain"
+        ? t("À toi de jouer, {nom}.", { nom: joueur.nom })
+        : t("{nom} réfléchit", { nom: joueur.nom }), joueur.type !== "humain");
+    }
+  }
+
+  return { demarrer, rejouer, annuler, clicHumain, actualiserLangue };
 })();

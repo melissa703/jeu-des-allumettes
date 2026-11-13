@@ -1,0 +1,102 @@
+/* epique.css - surcouche « donjon sombre » (chargée après style.css) */
+#braises-fond { position: fixed; inset: 0; z-index: -1; pointer-events: none; width: 100%; height: 100%; }
+body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 50;
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,.75) 100%); }
+.accueil-texte h1 { text-shadow: 0 0 30px rgba(224,169,59,.45), 0 0 70px rgba(217,67,43,.3); animation: lueur 4s ease-in-out infinite; }
+@keyframes lueur { 50% { text-shadow: 0 0 45px rgba(224,169,59,.8), 0 0 90px rgba(217,67,43,.5); } }
+.allu .tete { filter: drop-shadow(0 0 5px rgba(217,67,43,.7)); }
+
+/* Plateau : torches de chaque côté */
+.plateau { position: relative; }
+.plateau::before, .plateau::after { content: ""; position: absolute; top: 5%; width: 120px; height: 260px; pointer-events: none;
+  background: radial-gradient(ellipse, rgba(255,140,40,.35), transparent 70%); animation: torche 2.2s ease-in-out infinite; }
+.plateau::before { left: -90px; } .plateau::after { right: -90px; animation-delay: -1.1s; }
+@keyframes torche { 0%,100% { opacity: .55; transform: scale(1); } 50% { opacity: 1; transform: scale(1.12); } }
+
+/* Démon */
+.demon { width: 120px; margin: 0 auto -.4rem; filter: drop-shadow(0 0 18px rgba(224,169,59,.45)); animation: respire 5s ease-in-out infinite; }
+.demon svg { width: 100%; height: auto; display: block; }
+.demon .oeil { animation: regard 3s ease-in-out infinite; }
+@keyframes respire { 50% { transform: translateY(-4px); } }
+@keyframes regard { 50% { opacity: .35; } }
+body[data-mode="deux"] .demon, body[data-mode="deux"] .parole { display: none; }
+.parole { min-height: 1.7em; text-align: center; font-style: italic; color: var(--or); margin-bottom: .6rem; }
+.parole.apparait { animation: fondu .6s ease; }
+@keyframes fondu { from { opacity: 0; transform: translateY(6px); } }
+
+/* Danger : dernières allumettes */
+.zone-allumettes.danger { animation: danger 1s ease-in-out infinite; }
+@keyframes danger { 50% { filter: drop-shadow(0 0 18px rgba(217,67,43,.9)); } }
+
+/* Conseil du sage */
+.btn-conseil { display: block; margin: 1rem auto 0; padding: .6rem 1.2rem; border-radius: 999px; cursor: pointer;
+  background: transparent; color: var(--or); border: 1px solid var(--or); font: inherit; }
+.btn-conseil:hover:not(:disabled) { background: rgba(224,169,59,.15); }
+.btn-conseil:disabled { opacity: .4; cursor: not-allowed; }
+.btn-retrait.conseil { outline: 2px solid var(--or); box-shadow: 0 0 24px rgba(224,169,59,.8); animation: pulse .6s ease 3; }
+
+/* Toast */
+.toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 100; padding: .8rem 1.4rem;
+  background: #241810; border: 1px solid var(--or); border-radius: 12px; color: var(--ivoire); box-shadow: 0 0 30px rgba(224,169,59,.35);
+  animation: fondu .4s ease; }
+
+/* Panthéon */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: .8rem; margin-bottom: 1.4rem; }
+.stats div { text-align: center; padding: 1rem; border-radius: var(--rayon); background: rgba(0,0,0,.35); border: 1px solid rgba(224,169,59,.25); }
+.stats b { display: block; font: 900 2.4rem var(--police-titre); color: var(--or); }
+.stats small, .trophee small { color: var(--ivoire-doux); }
+.trophees { display: grid; gap: .7rem; }
+.trophee { display: flex; gap: 1rem; align-items: center; padding: .8rem 1rem; border-radius: var(--rayon); background: rgba(0,0,0,.3); opacity: .4; filter: grayscale(1); }
+.trophee.ok { opacity: 1; filter: none; border: 1px solid var(--or); box-shadow: 0 0 18px rgba(224,169,59,.25); }
+.trophee span { font-size: 1.8rem; } .trophee small { display: block; }
+
+/* ===== V2 : plus lumineux, plus vivant ===== */
+:root { --ivoire-doux: #eadcc0; --or: #ffc53d; }
+body { background: linear-gradient(135deg, #3b2060 0%, #5a2a1c 55%, #7a3a14 100%) fixed !important; }
+body::after { display: none; }
+body::before { content: ""; position: fixed; inset: -20%; z-index: -2; pointer-events: none;
+  background: radial-gradient(circle at 20% 25%, rgba(190,90,255,.45), transparent 40%), radial-gradient(circle at 80% 75%, rgba(255,140,40,.5), transparent 42%);
+  animation: orbes 12s ease-in-out infinite alternate; }
+@keyframes orbes { to { transform: translate(6%, -5%) scale(1.15); } }
+.ecran.actif > * { animation: entree .6s cubic-bezier(.2,.9,.3,1.25); }
+@keyframes entree { from { opacity: 0; transform: translateY(26px) scale(.96); } }
+
+.accueil-texte h1 { background: linear-gradient(180deg, #fff8dc, #ffc53d 55%, #ff7a2e); -webkit-background-clip: text; background-clip: text;
+  color: transparent; text-shadow: none; animation: none; filter: drop-shadow(0 0 24px rgba(255,150,40,.65)); }
+.illustration { animation: flotte 5s ease-in-out infinite; filter: drop-shadow(0 0 40px rgba(255,160,50,.55)); }
+@keyframes flotte { 50% { transform: translateY(-14px); } }
+
+.panneau, .plateau { background: linear-gradient(160deg, rgba(255,235,200,.16), rgba(255,200,140,.06)) !important; backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,197,61,.6) !important; box-shadow: 0 0 50px rgba(255,150,40,.28), inset 0 0 40px rgba(255,255,255,.05); }
+.btn-or { background: linear-gradient(110deg, #ffe07a, #ff9d2e, #ffe07a) !important; background-size: 220% !important; color: #2a1405 !important;
+  box-shadow: 0 6px 28px rgba(255,160,40,.65) !important; animation: brillance 3s linear infinite; transition: transform .2s; }
+@keyframes brillance { to { background-position: 220% 0; } }
+.btn-contour { border-color: var(--or) !important; color: #fff3d0 !important; transition: transform .2s, background .2s; }
+.btn:hover { transform: translateY(-4px) scale(1.06); } .btn-contour:hover { background: rgba(255,197,61,.22) !important; }
+.btn:active { transform: scale(.96); }
+
+.allu { filter: drop-shadow(0 6px 8px rgba(0,0,0,.45)); transition: transform .2s; } .allu:hover { transform: translateY(-8px); }
+.allu .tete { animation: braise 1.8s ease-in-out infinite; } .allu:nth-child(odd) .tete { animation-delay: .6s; }
+@keyframes braise { 50% { filter: drop-shadow(0 0 12px #ff7a2e) brightness(1.3); } }
+.carte-joueur { background: rgba(255,255,255,.1) !important; transition: all .3s; }
+.carte-joueur.active { box-shadow: 0 0 34px rgba(255,197,61,.85) !important; transform: scale(1.06); }
+.compteur span { background: linear-gradient(180deg, #fff, #ffc53d); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 14px rgba(255,150,40,.7)); }
+
+.btn-retrait { color: #1d0f05 !important; font-weight: 700; border: 0 !important; transition: transform .2s, box-shadow .2s;
+  background: linear-gradient(160deg, var(--c), #ffffffaa 190%) !important; box-shadow: 0 6px 20px var(--c); }
+.btn-retrait[data-retrait="1"] { --c: #4fe3a0; } .btn-retrait[data-retrait="2"] { --c: #ffc53d; } .btn-retrait[data-retrait="3"] { --c: #ff6b57; }
+.btn-retrait:hover:not(:disabled) { transform: translateY(-6px) scale(1.05); } .btn-retrait:disabled { opacity: .3; box-shadow: none; }
+
+.jauge { height: 12px; margin: .8rem auto; max-width: 520px; border-radius: 99px; background: rgba(0,0,0,.4); overflow: hidden; border: 1px solid rgba(255,197,61,.5); }
+.jauge i { display: block; height: 100%; border-radius: 99px; transition: width .5s ease; background: linear-gradient(90deg, #ffe07a, #ff9d2e); box-shadow: 0 0 16px #ff9d2e; }
+.jauge.rouge i { background: linear-gradient(90deg, #ff9d2e, #ff3d3d); animation: danger 0.7s infinite; }
+.demon { width: 170px; filter: drop-shadow(0 0 28px rgba(255,197,61,.8)); }
+.parole { background: rgba(0,0,0,.35); border: 1px solid rgba(255,197,61,.5); border-radius: 14px; padding: .5rem 1rem; max-width: 460px; margin: 0 auto .8rem; color: #ffe9a8; }
+.trophee { opacity: .65; filter: grayscale(.6); } .trophee.ok { animation: brillance 3s linear infinite; background: rgba(255,197,61,.14); }
+
+.etincelle { position: fixed; z-index: 90; width: 7px; height: 7px; border-radius: 50%; background: #ffb347; box-shadow: 0 0 10px #ff7a2e; pointer-events: none; animation: jaillit .8s ease-out forwards; }
+@keyframes jaillit { to { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
+.confetti { position: fixed; top: -20px; z-index: 90; width: 10px; height: 16px; pointer-events: none; animation: chute 3s linear forwards; }
+@keyframes chute { to { transform: translateY(110vh) rotate(720deg); } }
+body.secoue { animation: secousse .6s; } @keyframes secousse { 20%,60% { transform: translateX(-12px); } 40%,80% { transform: translateX(12px); } }
+@media (prefers-reduced-motion: reduce) { * { animation-duration: .01s !important; } }

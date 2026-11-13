@@ -17,17 +17,24 @@ function majBoutonSon() {
   const actif = Son.estActif();
   const b = document.getElementById("btn-son");
   b.setAttribute("aria-pressed", String(actif));
-  b.setAttribute("aria-label", actif ? "Couper le son" : "Activer le son");
+  b.setAttribute("aria-label", actif ? t("Couper le son") : t("Activer le son"));
   document.getElementById("btn-son-icone").textContent = actif ? "🔊" : "🔇";
-  document.getElementById("btn-son-texte").textContent = actif ? "Son" : "Muet";
+  document.getElementById("btn-son-texte").textContent = actif ? t("Son") : t("Muet");
 }
 document.getElementById("btn-son").addEventListener("click", function () { Son.basculer(); majBoutonSon(); });
 majBoutonSon();
 
+document.getElementById("btn-langue").addEventListener("click", function () {
+  setLangue(getLangue() === "fr" ? "en" : "fr");
+  majBoutonSon();
+  majFormulaire();
+  if (typeof UI !== "undefined" && typeof UI.actualiserLangue === "function") UI.actualiserLangue();
+});
+
 /* Clic sonore sur tous les boutons du jeu (sauf le bouton son et les retraits, qui ont leur propre son) */
 document.addEventListener("click", function (e) {
   const b = e.target.closest("button");
-  if (!b || b.id === "btn-son" || b.disabled || b.hasAttribute("data-retrait") || b.id === "btn-commencer" || b.id === "btn-rejouer") return;
+  if (!b || (b.id === "btn-son" || b.id === "btn-langue") || b.disabled || b.hasAttribute("data-retrait") || b.id === "btn-commencer" || b.id === "btn-rejouer") return;
   Son.clic();
 });
 
@@ -48,7 +55,7 @@ function modeChoisi() { return document.querySelector('input[name="mode"]:checke
 function majFormulaire() {
   const deux = modeChoisi() === "deux";
   document.getElementById("champ-nom2").hidden = !deux;
-  document.getElementById("label-nom1").textContent = deux ? "Nom du joueur 1" : "Ton nom";
+  document.getElementById("label-nom1").textContent = deux ? t("Nom du joueur 1") : t("Ton nom");
 }
 document.querySelectorAll('input[name="mode"]').forEach(function (r) { r.addEventListener("change", majFormulaire); });
 document.querySelectorAll("[data-nb]").forEach(function (b) {
@@ -60,7 +67,7 @@ majFormulaire();
 function lireConfiguration() {
   const nb = Number(champNb.value);
   if (champNb.value.trim() === "" || !Number.isInteger(nb) || nb < 1 || nb > Jeu.MAX_ALLUMETTES) {
-    erreur.textContent = "Entre un nombre entier d'allumettes entre 1 et " + Jeu.MAX_ALLUMETTES + ".";
+    erreur.textContent = t("Entre un nombre entier d'allumettes entre 1 et {max}.", { max: Jeu.MAX_ALLUMETTES });
     return null;
   }
   const mode = modeChoisi();
@@ -68,15 +75,15 @@ function lireConfiguration() {
   const nom2 = champNom2.value.trim();
   let joueurs;
   if (mode === "deux") {
-    if (!nom1 || !nom2) { erreur.textContent = "Saisis un nom pour chaque joueur."; return null; }
-    if (nom1.toLowerCase() === nom2.toLowerCase()) { erreur.textContent = "Les deux joueurs doivent avoir des noms différents."; return null; }
+    if (!nom1 || !nom2) { erreur.textContent = t("Saisis un nom pour chaque joueur."); return null; }
+    if (nom1.toLowerCase() === nom2.toLowerCase()) { erreur.textContent = t("Les deux joueurs doivent avoir des noms différents."); return null; }
     joueurs = [{ nom: nom1, type: "humain" }, { nom: nom2, type: "humain" }];
   } else {
-    if (!nom1) { erreur.textContent = "Saisis ton nom."; return null; }
+    if (!nom1) { erreur.textContent = t("Saisis ton nom."); return null; }
     const machine = mode === "ia"
-      ? { nom: "L'IA", type: "ia" }
-      : { nom: "La machine", type: "aleatoire" };
-    if (nom1.toLowerCase() === machine.nom.toLowerCase()) { erreur.textContent = "Choisis un autre nom."; return null; }
+      ? { nom: t("L'IA"), type: "ia" }
+      : { nom: t("La machine"), type: "aleatoire" };
+    if (nom1.toLowerCase() === machine.nom.toLowerCase()) { erreur.textContent = t("Choisis un autre nom."); return null; }
     joueurs = [{ nom: nom1, type: "humain" }, machine];
   }
   erreur.textContent = "";
